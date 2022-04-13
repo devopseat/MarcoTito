@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        table {
+            float:left;
+            margin:20px;
+        }
+        table td {
+            border:1px #aaa solid;
+            margin:1px;
+            padding:3px 5px;
+            text-align:center;
+        }
+        table tr:nth-child(3) td:nth-child(3) {
+            background:#ccc;
+        }
+
+        table{
+            background: green;
+            padding:10px;
+        }
+
+        table thead tr th {
+            color: white;
+        }
+
+        table tbody tr td {
+            background: white;
+        }
+
+        .red{
+            background: red;
+        }
+
+
+        .GREEN{
+            background: green;
+        }
+
+
+    </style>
+
+    <div>        
+        <button onclick="generarNumero()">Generar Número</button>
+        
+        <p id="TextSpace"></p>
+        <p id="bingo" class="GREEN"></p>
+    </div>
+
+    <div id="bingo-cards"></div>
+
+    
+    
+
+    <script>
+
+        var NumerosGenerados = [];
+        var NumerosGeneradosString = [];
+        let arr = [
+                [], // b (1-15)
+                [], // i (16-30)
+                [], // n (31-45)
+                [], // g (46-60)
+                []  // o (51-75)
+            ];
+
+        function generarNumero(){
+            var numeroAleatorio =Math.floor(Math.random() * (75-1+1)) + 1;
+
+            if ( NumerosGenerados.includes( numeroAleatorio ) ){
+                generarNumero();
+            }
+            else{
+                NumerosGenerados.push(numeroAleatorio);
+                console.log("numeroAleatorio");
+                console.log(NumerosGenerados);
+                //document.getElementById('numeroGenerado').textContent(numeroAleatorio);
+                var letra = '';
+                if(numeroAleatorio >0 && numeroAleatorio <= 15  ){
+                    letra = 'B';
+                }
+                else if(numeroAleatorio >= 16 && numeroAleatorio <= 30  ){
+                    letra = 'I';
+                }
+                else if(numeroAleatorio >= 31 && numeroAleatorio <= 45  ){
+                    letra = 'N';
+                }
+                else if(numeroAleatorio >= 46 && numeroAleatorio <= 60  ){
+                    letra = 'G';
+                }
+                else if(numeroAleatorio >= 51 && numeroAleatorio <= 75  ){
+                    letra = 'O';
+                }
+                document.getElementById("TextSpace").textContent = letra + numeroAleatorio;
+                
+            }            
+            console.log("numeroAleatorio");
+            console.log(NumerosGenerados);
+
+            let cards = [arr];
+            let html = '';
+            cards.forEach(card => {
+                html += `
+                <table>
+                <thead>
+                <tr>
+                    <th>B</th>
+                    <th>I</th>
+                    <th>N</th>
+                    <th>G</th>
+                    <th>O</th>
+                </tr>
+                </thead>
+                <tbody>`;
+                for(let i = 0; i < 5; i++) {
+
+                    var fila1= NumerosGenerados.includes( card[0][i] ) ? 'red':'';
+                    var fila2= NumerosGenerados.includes( card[1][i] ) ? 'red':'';
+                    var fila3= NumerosGenerados.includes( card[2][i] ) ? 'red':'';
+                    var fila4= NumerosGenerados.includes( card[3][i] ) ? 'red':'';
+                    var fila5= NumerosGenerados.includes( card[4][i] ) ? 'red':'';
+
+                    html += `
+                    
+                <tr>
+                    <td class="`+ fila1 +`" >${card[0][i]}</td>
+                    <td class="`+ fila2 +`" >${card[1][i]}</td>
+                    <td class="`+ fila3 +`" >${card[2][i]}</td>
+                    <td class="`+ fila4 +`" >${card[3][i]}</td>
+                    <td class="`+ fila5 +`" >${card[4][i]}</td>
+                </tr>
+                    `;
+                }
+                html += '</tbody></table>';
+
+            });
+            
+            var divs = document.getElementsByClassName("red").length;
+
+            console.log(divs);
+            console.log(divs);
+            
+            if(divs == 24){
+                document.getElementById("bingo").textContent = "BINGO!!";
+            }
+
+
+
+            document.querySelector('#bingo-cards').innerHTML = html;
+
+        }
+
+        function getBingoCard() {
+            // Crear arreglo con subarreglo para cada columna necesaria
+            
+            // Llenar cada subarreglo
+            for(let i = 0; i < arr.length; i++) {
+                // Asignar máximo y mínimo de acuerdo a posición
+                let min = (i * 15) + 1;
+                let max = min + 15;
+                // Este ciclo termina cuando el subarreglo tenga 5 elementos
+                while(arr[i].length < 5) {
+                    let num = Math.floor(Math.random() * (max - min)) + min;
+                    // Evitar que se repitan números
+                    if(!arr[i].includes(num)) {
+                        arr[i].push(num);
+                    }
+                }
+                // Ordenar
+                arr[i].sort((a,b) => a - b);
+            }
+            // Generalmente el número del centro es un comodín
+            arr[2][2] = '';
+            return arr;
+        }
+
+        function cartones() {
+            return [
+                getBingoCard()
+               
+            ] 
+        }
+
+        let cards = cartones();
+        let html = '';
+        cards.forEach(card => {
+            html += `
+            <table>
+            <thead>
+            <tr>
+                <th>B</th>
+                <th>I</th>
+                <th>N</th>
+                <th>G</th>
+                <th>O</th>
+            </tr>
+            </thead>
+            <tbody>`;
+            for(let i = 0; i < 5; i++) {
+                html += `
+            <tr>
+                <td>${card[0][i]}</td>
+                <td>${card[1][i]}</td>
+                <td>${card[2][i]}</td>
+                <td>${card[3][i]}</td>
+                <td>${card[4][i]}</td>
+            </tr>
+                `;
+            }
+            html += '</tbody></table>';
+        });
+
+        document.querySelector('#bingo-cards').innerHTML = html;
+
+        // Si quieres que se muestren como arreglo, sin subarreglos:
+        let newCards = [];
+        for(let i = 0; i < cards.length; i++) {
+        // Crear arreglo para tarjeta
+        let simple = [];
+        for(x = 0; x < 5; x ++) {
+            simple.push(...cards[i][x]);
+        }
+        newCards.push(simple);
+        }
+        console.log(newCards);
+
+    </script>
+</body>
+</html>
